@@ -19,7 +19,7 @@ jobs:
           ref: main
 
       - name: Get latest tag
-        -directory: repo_upstream
+        directory: repo_upstream
         id: get_latest_tag
         run: |
           # Use git describe to get the latest tag.
