@@ -37,6 +37,7 @@ jobs:
         working-directory: repo_upstream
         id: get_latest_tag
         run: |
-          git status
+          git remote -v
+          git log
           git describe --tags > git.out
           cat git.out
