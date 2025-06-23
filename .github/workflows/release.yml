@@ -1,0 +1,34 @@
+---
+
+name: Release downstream
+
+on:
+  # Enable manual start button
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout upstream repository
+        uses: actions/checkout@v4
+        with:
+          repository: marcelmamula/ap4s
+          path: repo_upstream
+          ref: main
+
+      - name: Get latest tag
+        -directory: repo_upstream
+        id: get_latest_tag
+        run: |
+          # Use git describe to get the latest tag.
+          # --tags: consider all tags (not just annotated ones)
+          # --abbrev=0: show only the tag (not the commit hash)
+          LATEST_TAG=$(git describe --tags --abbrev=0 || echo "no-tag")
+          echo "Latest tag: $LATEST_TAG"
+          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      - name: Use the latest tag in a subsequent step
+        run: |
+          echo "The latest tag is ${{ steps.get_latest_tag.outputs.latest_tag }}"
