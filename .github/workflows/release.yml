@@ -18,18 +18,34 @@ jobs:
           path: repo_upstream
           ref: main
 
-      - name: Get latest tag
+      - name: Checkout downstream repository
+        uses: actions/checkout@v4
+        with:
+          path: repo_downstream
+          ref: main
+
+      - name: Get latest tag from upstream
         working-directory: repo_upstream
-        id: get_latest_tag
+        id: get_latest_upstream_tag
         run: |
           git fetch --tags
           LATEST_TAG=$(git describe --tags --abbrev=0 || echo "no-tag")
-          echo "Latest tag: $LATEST_TAG"
-          echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest upstream tag: $LATEST_TAG"
+          echo "latest_upstream_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+
+      - name: Get latest tag from downstream
+        working-directory: repo_downstream
+        id: get_latest_downstream_tag
+        run: |
+          git fetch --tags
+          LATEST_TAG=$(git describe --tags --abbrev=0 || echo "no-tag")
+          echo "Latest downstream tag: $LATEST_TAG"
+          echo "latest_downstream_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
 
       - name: Use the latest tag in a subsequent step
         run: |
-          echo "The latest tag is ${{ steps.get_latest_tag.outputs.latest_tag }}"
+          echo "Upstream ${{ steps.get_latest_upstream_tag.outputs.latest_upstream_tag }}"
+          echo "Downstream ${{ steps.get_latest_downstream_tag.outputs.latest_downstream_tag }}"
 
       # - name: Get latest tag
       #   working-directory: repo_upstream
